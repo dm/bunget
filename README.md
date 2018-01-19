@@ -7,21 +7,21 @@
 
 #### Build lib bunget and demo application
 
-### Prerequisites 
+### Prerequisites
 * Linux
   * sudo apt-get install uuid-dev
   * sudo apt-get install cmake
   * sudo apt-get install build-essential
   * sudo apt-get install libcrypto++-dev
-  
+
 
 
 ### Description:
 
-BUNGET is a C++ library for Linux which help to write GAP/GATT servers (Bluetooth 4.0). It provides abstract classes and methods to create GATT services, characteristics (READ/WRITE/NOTIFICATIONS). The library does not require the Bluez, but it requires some bluetooth utilities. The library was written from scratch. The idea of writing 'yet another BTLE implemetation' came after I spend days and days trying Bluez and Bleno. I could not get Blues working programatically and easy. Bleno is terible slow and tremendous resource eater, also brings entire java enciclopedia along with. 
-Here is a simple C++ library which I hope would help to write GATT services. 
+BUNGET is a C++ library for Linux which help to write GAP/GATT servers (Bluetooth 4.0). It provides abstract classes and methods to create GATT services, characteristics (READ/WRITE/NOTIFICATIONS). The library does not require the Bluez, but it requires some bluetooth utilities. The library was written from scratch. The idea of writing 'yet another BTLE implemetation' came after I spend days and days trying Bluez and Bleno. I could not get Blues working programatically and easy. Bleno is terible slow and tremendous resource eater, also brings entire java enciclopedia along with.
+Here is a simple C++ library which I hope would help to write GATT services.
 
-Be advised! 
+Be advised!
 BTLE is a messy protocol, Is designed by lawyers, not by engineeres) Have a glimpse at the specification, don't panick.
 
 *For most commands, a Command Complete event shall be sent to the Host
@@ -32,24 +32,24 @@ event back to the Host when it has begun to execute the command. When the
 actions associated with the command have finished, an event that is
 associated with the command shall be sent by the Controller to the Host* ... got it ?
 
-I  recomend to test your environment using [arduiuipush](https://play.google.com/store/apps/details?id=com.ermote.ArduUiPush&hl=en) app from the store on Android and on Aple using PunchTru. If you are planning to write your own LE implementation on Android, I can help with the arduiuipush LE base class which is stable.
-
+I recommend to test your environment using [arduiuipush](https://play.google.com/store/apps/details?id=com.ermote.ArduUiPush&hl=en) app from the store on Android and on Apple using [PunchThrough](https://itunes.apple.com/us/app/lightblue-explorer-bluetooth/id557428110?mt=8). If you are planning to write your own LE implementation on Android, I can help with the arduiuipush LE base class which is stable.
 
 * Server only: GATT services characteristics, descriptors or beacons.
-* Characteristics: R W I N + Descriptors. 
+* Characteristics: R W I N + Descriptors.
 * Requires: hciconfig tool from blues package in /usr/bin
-* (iii).    Bunget lib will stop the bluetooth service.
-* (iiii) Read all documents.
+* Bunget lib will stop the bluetooth service.
+* Read all documents.
 
-
-
-
-#### (iii) Before running bunget
- * Disable / uninstall bluetooth service. 
+#### Before running bunget
+ * Disable / uninstall bluetooth service.
  * Disable kill any bt managers if you have a desktop environment.
- * check if there are any processes keeping BT up. (ps ax | grep blu )
+ * check if there are any processes keeping BT up. Find them using
+ ```
+ ps ax | grep blu
+ ```
+
  * Kill them all. Make sure they not restart.
-  
+
 
 ## Block Diagram:
 
@@ -80,7 +80,7 @@ Free, for non commercial products. Personalised license from the Author for comm
 * Beacon advertising, needs 128 bit UUID's only.
 
 
-### Demo R-PI console (left). ArduUiPush APK Right 
+### Demo R-PI console (left). ArduUiPush APK Right
 
 * ArduUiPush;No screens scanned and loaded for advertised name.
 
@@ -93,20 +93,20 @@ Check also: ArduUiPush demo: https://www.youtube.com/watch?v=Fw4yCe2ejNw
 ![alt text](https://github.com/comarius/bunget/blob/master/docs/bungetl.png "bunget-lib")
 
 
-## Issues Tweaks 
+## Issues Tweaks
 
 * On different BTLE dongles the timing between receiving HCI event and sending back data disrupts the functionality.
   * Build with DEBUG enabled. If after connection the progress stops around this TRACE:
-  ```javascript
-HCI: ACL_START 
--->[16]0240200B0007000400100100FFFF0028 
+```javascript
+HCI: ACL_START
+-->[16]0240200B0007000400100100FFFF0028
 GATT DATA:ATT_OP_READ_BY_GROUP_REQ  
-my_proc event: onServicesDiscovered 
+my_proc event: onServicesDiscovered
   ```
-  * Tweak the receive<delay>send value at main line (see code). . 
+  * Tweak the receive<delay>send value at main line (see code). .
   * My Broadcom dongle works with >16 ms delay on R-PI and with >2 ms on 4 quad HP Intel PC.
-  * The advertise(interval in ms), is set to 512 milliseconds. If this value gets to low would flood the hci socket and some would require a power cycle. For maxim roughput drive an indicator or a read property from the mobile/client, using it's callback completion call shitty mechanism. 
-  
+  * The advertise(interval in ms), is set to 512 milliseconds. If this value gets to low would flood the hci socket and some would require a power cycle. For maxim roughput drive an indicator or a read property from the mobile/client, using it's callback completion call shitty mechanism.
+
 ```javascript
        IServer*    BS =  ctx->new_server(&procedure, dev, "advname", 0/* tweak delay*/, advallservices /*including HCI defaults*/);
 ```
@@ -146,14 +146,14 @@ public:
     void onWriteDescriptor(IHandler* pc, IHandler* pd);     // called when remote writes pc's charact descriptor pd
     void evAdvertise(bool onoff);                           // called when advertising turns on/off
     void evDeviceState(bool onoff);                         //called when device dongle is plugged / unplugged (buggy still)
-    void evClientState(bool connected);                     // called when a client connects / disconnetcs 
-    bool evLoop(IServer* ps);                               //called when the hci-socket idles. Be short!. 
+    void evClientState(bool connected);                     // called when a client connects / disconnetcs
+    bool evLoop(IServer* ps);                               //called when the hci-socket idles. Be short!.
                                                             // return false to break the run() blocking call.    
 
 private:
     void        _prepare_gpio17();  // RPI specific, to control LEDS for the purpose of the demo
     const char* _get_time();        // reads local time, and returns a string
-    float       _get_temp();        // reads temp,  on RPI. 
+    float       _get_temp();        // reads temp,  on RPI.
     const char* _get_temp_s();      // same as above but returns a string
     uint8_t     _get_gpio();        // reads GPIO status on RPI
     void        _send_value(IHandler* pc);  // sends a value to GATT
@@ -175,7 +175,7 @@ int main(int n, char* v[])
 
     IServer*    BS =  ctx->new_server(&procedure, 0, "rpi-bunget", 16, true);      // one GATT server per hci device
     IService*   ps = BS->add_service(0x123F,"demo");                              // add a service to the GATT server
-    
+
     //
     // add some characterisitcs
     //
@@ -189,7 +189,7 @@ int main(int n, char* v[])
 
     procedure.Temp1Chr = ps->add_charact(UID_TEMP, PROPERTY_NOTIFY|PROPERTY_INDICATE,
                               0,
-                              FORMAT_RAW, 20); // we send it as string 
+                              FORMAT_RAW, 20); // we send it as string
 
     try{
         BS->advertise(512); // notification interval, A valid handler comes in evLoop()
@@ -227,47 +227,43 @@ bool my_proc::evLoop(IServer* ps, uint16_t nHandle)
 //  ... see main.cpp for the rest of the callback implenentation
 
 ```
-#######################################################################
-#######################################################################
+# Building
 
-H O W     TO   B U I L D 
-
-#######################################################################
-```javascript
-cmake .
-make
-cd bin
-sudo ./bunget 0  (hci device number)
-```
-
-#########################################################################
-### Raspberry PI Build (check compiler version )
+## Raspberry PI Build (check compiler version )
   - The C compiler identification is GNU 4.9.2
   - Board: RPI-2
   - Fresh distribution: Linux minibian 4.1.18-v7+ #846 SMP Thu Feb 25 14:22:53 GMT 2016 armv7l GNU/Linux
   - Login as root/raspberry
 
-```javascript
+```bash
+git clone https://github.com/comarius/bunget
+cd bunget/src
+# Build the lib
+cd libbunget
+cmake .
+make
+# Build the app
+cd ..
+cmake .
+make
+cd bin
+sudo ./bunget 0 # (hci device number)
+```
+
+```bash
 #
 # Prerequisites. Also required for new system
 #
 apt-get update
 apt-get install bluez # (needed for hciconfig utility for now)
 apt-get install cmake
-apt-get install  g++
-apt-get install  rfkill
+apt-get install g++
+apt-get install rfkill
 apt-get install libcrypto++-dev
 service bluetooth stop             # mandatory
 update-rc.d -f  bluetooth remove   # to make it permanent
 # on systemD use systemctl disable 'servicename'
 
-#
-# Clone this git
-#
-git clone https://github.com/comarius/bunget
-cd bunget
-cmake .
-make
 cd bin
 
 #
@@ -276,38 +272,42 @@ cd bin
 root@minibian:~/bunget/src/bin# hciconfig
 hci0:	Type: BR/EDR  Bus: USB
 	BD Address: 5C:F3:70:76:B2:B2  ACL MTU: 1021:8  SCO MTU: 64:1
-	DOWN 
+	DOWN
 	RX bytes:616 acl:0 sco:0 events:34 errors:0
 	TX bytes:380 acl:0 sco:0 commands:34 errors:0
 
 # argument for hci0 is 0, for hci1 is 1 and so on
 # therefore we run bunget server as:
 
-./bunget 0
+sudo ./bunget 0
+```
 
+# Example session
+
+```javascript
 root@minibian:~/bunget/src/bin# ./bunget 0
 sh: echo: I/O error
 Failed to stop bluetoothd.service: Unit bluetoothd.service not loaded.
-my_proc event:  onAdvertized:0 
-my_proc event:  onDeviceStatus:1 
-my_proc event:  onAdvertized:1 
-#
-# here I connected the BTLE scanner phone and read all the characteristics
-#
-accepted: 5F:C9:32:F3:5D:F6,* 
-my_proc event: onServicesDiscovered 
-my_proc event:  onWriteDescriptor:1 
-my_proc event: onSubscribesNotify:3400=1 
-my_proc event:  onWriteDescriptor:1 
-my_proc event: onSubscribesNotify:3401=1 
-my_proc event:  onWriteDescriptor:1 
-my_proc event: onSubscribesNotify:3403=1 
+my_proc event:  onAdvertized:0
+my_proc event:  onDeviceStatus:1
+my_proc event:  onAdvertized:1
 
+#
+# Here I connected the BTLE scanner phone and read all the characteristics
+#
+
+accepted: 5F:C9:32:F3:5D:F6,*
+my_proc event: onServicesDiscovered
+my_proc event:  onWriteDescriptor:1
+my_proc event: onSubscribesNotify:3400=1
+my_proc event:  onWriteDescriptor:1
+my_proc event: onSubscribesNotify:3401=1
+my_proc event:  onWriteDescriptor:1
+my_proc event: onSubscribesNotify:3403=1
 
 ```
 
-  
-### Issues
+# Issues
 - stop bunget
 - disable bluetooth service
 - stop bluetooth service
@@ -315,17 +315,17 @@ my_proc event: onSubscribesNotify:3403=1
 - kill any process which uses bluetooth (scripts, desktop daemons, etc.)
 - restart on the mobile the bluetooth service (off 5 seconds, then on / reboot recomanded on some chipsets)
 - Tweak the timout [0-64] in main ctx->new_server(&procedure, dev, hostname, <timeout>);
-- Use notification intervals larger then go smaller. Start at 0.5 seconds. 
+- Use notification intervals larger then go smaller. Start at 0.5 seconds.
 
 ### Tested with broadcom BT4 dongle on:
 
 ####   C H I P
    - On board BT4 and default installed system. See the C H I P readme page.
    - USB dongle broadcom
-   
+
 ####   nano Pi NEO
   - BTLE couple of dongles, including nonanme Chinesse dongles
-  
+
 ####   nano Pi NEO2
   - BTLE couple of dongles, including nonanme Chinesse dongles
   - Onboard BTLE
@@ -336,12 +336,12 @@ my_proc event: onSubscribesNotify:3403=1
   - Linux minibian 4.4.17-v7+ #901 SMP Fri Aug 12 17:57:27 BST 2016 armv7l GNU/Linux
   - gcc (Raspbian 4.9.2-10) 4.9.2
   - g++ (Raspbian 4.9.2-10) 4.9.2
-  
+
 #### Ubuntu 16.04
   - Linux X540LA (ACER) 4.4.0-47-generic #68-Ubuntu SMP Wed Oct 26 19:39:52 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
   - gcc (Ubuntu 4.8.5-4ubuntu2) 4.8.5
   - g++ (Ubuntu 4.8.5-4ubuntu2) 4.8.5
-  
+
 #### Linux Mint
   - Linux hp 3.19.0-32-generic #37~14.04.1-Ubuntu SMP Thu Oct 22 09:41:40 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
   - g++ (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4
@@ -361,12 +361,12 @@ my_proc event: onSubscribesNotify:3403=1
 ```
 
 #### Device Used
-  - Nexux Tablet Android 6.0,
+  - Nexus Tablet Android 6.0,
   - ACER T06, Android 6.0, using following apps
     - BLE Scanner
     - ArduiuiPush
     - BluetoothLegatt V0.1.7 (this auto disconnects after 30..50 seocnds or so)
-    
+
   - Failed with ACER   AI - 830
   - Failed with Android 4.4.2
 
@@ -383,5 +383,3 @@ Questions, Bugs, Commercial usage: Contact by eMail for any questions: marrius98
 Free, for non commercial products. Personalised license from the Author for commercial products.
 
 Updated Nov 13.
-
-
