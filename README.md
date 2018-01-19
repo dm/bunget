@@ -279,7 +279,6 @@ hci0:	Type: BR/EDR  Bus: USB
 # argument for hci0 is 0, for hci1 is 1 and so on
 # therefore we run bunget server as:
 
-```bash
 sudo ./bunget 0
 ```
 
