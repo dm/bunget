@@ -32,22 +32,22 @@ event back to the Host when it has begun to execute the command. When the
 actions associated with the command have finished, an event that is
 associated with the command shall be sent by the Controller to the Host* ... got it ?
 
-I  recomend to test your environment using [arduiuipush](https://play.google.com/store/apps/details?id=com.ermote.ArduUiPush&hl=en) app from the store on Android and on Aple using PunchTru. If you are planning to write your own LE implementation on Android, I can help with the arduiuipush LE base class which is stable.
-
+I recommend to test your environment using [arduiuipush](https://play.google.com/store/apps/details?id=com.ermote.ArduUiPush&hl=en) app from the store on Android and on Apple using [PunchThrough](https://itunes.apple.com/us/app/lightblue-explorer-bluetooth/id557428110?mt=8). If you are planning to write your own LE implementation on Android, I can help with the arduiuipush LE base class which is stable.
 
 * Server only: GATT services characteristics, descriptors or beacons.
 * Characteristics: R W I N + Descriptors. 
 * Requires: hciconfig tool from blues package in /usr/bin
-* (iii).    Bunget lib will stop the bluetooth service.
-* (iiii) Read all documents.
+* Bunget lib will stop the bluetooth service.
+* Read all documents.
 
-
-
-
-#### (iii) Before running bunget
+#### Before running bunget
  * Disable / uninstall bluetooth service. 
  * Disable kill any bt managers if you have a desktop environment.
- * check if there are any processes keeping BT up. (ps ax | grep blu )
+ * check if there are any processes keeping BT up. Find them using
+ ```
+ ps ax | grep blu
+ ```
+ 
  * Kill them all. Make sure they not restart.
   
 
@@ -97,7 +97,7 @@ Check also: ArduUiPush demo: https://www.youtube.com/watch?v=Fw4yCe2ejNw
 
 * On different BTLE dongles the timing between receiving HCI event and sending back data disrupts the functionality.
   * Build with DEBUG enabled. If after connection the progress stops around this TRACE:
-  ```javascript
+```javascript
 HCI: ACL_START 
 -->[16]0240200B0007000400100100FFFF0028 
 GATT DATA:ATT_OP_READ_BY_GROUP_REQ  
@@ -227,47 +227,43 @@ bool my_proc::evLoop(IServer* ps, uint16_t nHandle)
 //  ... see main.cpp for the rest of the callback implenentation
 
 ```
-#######################################################################
-#######################################################################
+# Building 
 
-H O W     TO   B U I L D 
-
-#######################################################################
-```javascript
-cmake .
-make
-cd bin
-sudo ./bunget 0  (hci device number)
-```
-
-#########################################################################
-### Raspberry PI Build (check compiler version )
+## Raspberry PI Build (check compiler version )
   - The C compiler identification is GNU 4.9.2
   - Board: RPI-2
   - Fresh distribution: Linux minibian 4.1.18-v7+ #846 SMP Thu Feb 25 14:22:53 GMT 2016 armv7l GNU/Linux
   - Login as root/raspberry
 
-```javascript
+```bash
+git clone https://github.com/comarius/bunget
+cd bunget/src
+# Build the lib
+cd libbunget
+cmake .
+make
+# Build the app
+cd ..
+cmake .
+make
+cd bin
+sudo ./bunget 0 # (hci device number)
+```
+
+```bash
 #
 # Prerequisites. Also required for new system
 #
 apt-get update
 apt-get install bluez # (needed for hciconfig utility for now)
 apt-get install cmake
-apt-get install  g++
-apt-get install  rfkill
+apt-get install g++
+apt-get install rfkill
 apt-get install libcrypto++-dev
 service bluetooth stop             # mandatory
 update-rc.d -f  bluetooth remove   # to make it permanent
 # on systemD use systemctl disable 'servicename'
 
-#
-# Clone this git
-#
-git clone https://github.com/comarius/bunget
-cd bunget
-cmake .
-make
 cd bin
 
 #
@@ -283,7 +279,9 @@ hci0:	Type: BR/EDR  Bus: USB
 # argument for hci0 is 0, for hci1 is 1 and so on
 # therefore we run bunget server as:
 
-./bunget 0
+```bash
+sudo ./bunget 0
+```
 
 root@minibian:~/bunget/src/bin# ./bunget 0
 sh: echo: I/O error
@@ -302,12 +300,8 @@ my_proc event:  onWriteDescriptor:1
 my_proc event: onSubscribesNotify:3401=1 
 my_proc event:  onWriteDescriptor:1 
 my_proc event: onSubscribesNotify:3403=1 
-
-
-```
-
   
-### Issues
+# Issues
 - stop bunget
 - disable bluetooth service
 - stop bluetooth service
@@ -361,7 +355,7 @@ my_proc event: onSubscribesNotify:3403=1
 ```
 
 #### Device Used
-  - Nexux Tablet Android 6.0,
+  - Nexus Tablet Android 6.0,
   - ACER T06, Android 6.0, using following apps
     - BLE Scanner
     - ArduiuiPush
@@ -383,5 +377,3 @@ Questions, Bugs, Commercial usage: Contact by eMail for any questions: marrius98
 Free, for non commercial products. Personalised license from the Author for commercial products.
 
 Updated Nov 13.
-
-
