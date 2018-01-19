@@ -283,15 +283,20 @@ hci0:	Type: BR/EDR  Bus: USB
 sudo ./bunget 0
 ```
 
+# Example session
+
+```javascript
 root@minibian:~/bunget/src/bin# ./bunget 0
 sh: echo: I/O error
 Failed to stop bluetoothd.service: Unit bluetoothd.service not loaded.
 my_proc event:  onAdvertized:0 
 my_proc event:  onDeviceStatus:1 
 my_proc event:  onAdvertized:1 
+
 #
-# here I connected the BTLE scanner phone and read all the characteristics
+# Here I connected the BTLE scanner phone and read all the characteristics
 #
+
 accepted: 5F:C9:32:F3:5D:F6,* 
 my_proc event: onServicesDiscovered 
 my_proc event:  onWriteDescriptor:1 
@@ -300,6 +305,8 @@ my_proc event:  onWriteDescriptor:1
 my_proc event: onSubscribesNotify:3401=1 
 my_proc event:  onWriteDescriptor:1 
 my_proc event: onSubscribesNotify:3403=1 
+
+```
   
 # Issues
 - stop bunget
